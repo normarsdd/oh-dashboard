@@ -275,16 +275,48 @@
 
     /* ── COVERAGE MAP ── */
     #coverage-view { display: none; }
+
+    /* Gap summary banner */
+    .gap-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .gap-card {
+      background: white;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex; align-items: center; gap: 12px;
+      box-shadow: var(--shadow);
+    }
+    .gap-card-icon {
+      width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; flex-shrink: 0;
+    }
+    .gap-card-icon.red    { background: #FEE2E2; }
+    .gap-card-icon.yellow { background: #FEF3C7; }
+    .gap-card-icon.blue   { background: #DBEAFE; }
+    .gap-card-body { min-width: 0; }
+    .gap-card-number { font-size: 24px; font-weight: 800; color: var(--text); line-height: 1; }
+    .gap-card-label  { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .gap-card-sub    { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+    .gap-card-sub strong { color: var(--red); }
+
+    /* Grid wrap */
     .coverage-grid-wrap {
       background: white;
       border: 1.5px solid var(--border);
       border-radius: var(--radius);
       overflow: hidden;
       box-shadow: var(--shadow);
+      margin-bottom: 16px;
     }
     .coverage-grid {
       display: grid;
-      grid-template-columns: 140px repeat(5, 1fr);
+      grid-template-columns: 150px repeat(5, 1fr);
     }
     .cov-header {
       padding: 10px 14px;
@@ -294,41 +326,125 @@
       border-bottom: 1.5px solid var(--border);
       border-right: 1px solid var(--border);
     }
-    .cov-header.day-col-h {
-      text-align: center;
-    }
-    .cov-header.day-col-h.today-h { color: var(--primary); }
+    .cov-header.day-col-h { text-align: center; }
+    .cov-header.day-col-h.today-h { color: var(--primary); background: var(--primary-light); }
     .cov-row-label {
-      padding: 12px 14px;
-      font-size: 12px; font-weight: 600;
+      padding: 10px 14px;
       border-bottom: 1px solid var(--border);
       border-right: 1px solid var(--border);
       display: flex; align-items: center; gap: 8px;
     }
+
+    /* Cells */
     .cov-cell {
-      padding: 10px;
+      padding: 8px 10px;
       border-bottom: 1px solid var(--border);
       border-right: 1px solid var(--border);
-      text-align: center;
       font-size: 12px; font-weight: 600;
-      transition: filter .1s;
+      transition: filter .15s;
+      position: relative;
     }
-    .cov-cell:hover { filter: brightness(.95); }
-    .cov-none  { background: #FEE2E2; color: #991B1B; }
-    .cov-low   { background: #FEF3C7; color: #92400E; }
-    .cov-ok    { background: #D1FAE5; color: #065F46; }
-    .cov-good  { background: #A7F3D0; color: #064E3B; }
+    .cov-cell:hover { filter: brightness(.96); }
+    .cov-cell-count { font-size: 15px; font-weight: 800; margin-bottom: 5px; text-align: center; }
+    .cov-cell-regions { display: flex; flex-direction: column; gap: 3px; }
+    .cov-region-row {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 10px; font-weight: 600;
+    }
+    .cov-region-dot {
+      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+    }
+    .cov-region-dot.covered-AMER { background: #3B82F6; }
+    .cov-region-dot.covered-EMEA { background: #10B981; }
+    .cov-region-dot.covered-APAC { background: #F59E0B; }
+    .cov-region-dot.missing { background: transparent; border: 1.5px solid #D1D5DB; }
+    .region-name-covered { color: var(--text-muted); }
+    .region-name-missing { color: #D1D5DB; text-decoration: line-through; }
 
+    /* Zero-coverage cell */
+    .cov-none {
+      background: repeating-linear-gradient(
+        45deg,
+        #FEE2E2,
+        #FEE2E2 5px,
+        #FEF2F2 5px,
+        #FEF2F2 10px
+      );
+      color: #991B1B;
+    }
+    .cov-none .cov-cell-count { color: #991B1B; }
+    .cov-none .cov-region-dot.missing { border-color: #FCA5A5; }
+    .cov-none .region-name-missing { color: #FCA5A5; }
+    .gap-icon {
+      position: absolute; top: 6px; right: 8px;
+      font-size: 12px; line-height: 1;
+    }
+
+    /* Partial / covered */
+    .cov-partial { background: #FFFBEB; color: #92400E; }
+    .cov-partial .cov-cell-count { color: #D97706; }
+    .cov-ok   { background: #ECFDF5; }
+    .cov-ok   .cov-cell-count { color: #059669; }
+    .cov-good { background: #D1FAE5; }
+    .cov-good .cov-cell-count { color: #065F46; }
+
+    /* Legend + footer */
     .coverage-legend {
-      display: flex; gap: 16px; align-items: center;
-      padding: 14px 16px;
+      display: flex; gap: 16px; align-items: center; flex-wrap: wrap;
+      padding: 12px 16px;
       border-top: 1.5px solid var(--border);
       font-size: 12px; color: var(--text-muted);
+      background: var(--bg);
     }
     .legend-item { display: flex; align-items: center; gap: 6px; }
-    .legend-dot {
-      width: 12px; height: 12px; border-radius: 3px;
+    .legend-swatch {
+      width: 22px; height: 14px; border-radius: 3px; flex-shrink: 0;
     }
+    .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+    /* Gap list */
+    .gaps-section { }
+    .gaps-section-title {
+      font-size: 13px; font-weight: 700; color: var(--text);
+      margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+    }
+    .gaps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 10px;
+    }
+    .gap-item {
+      background: white;
+      border: 1.5px solid #FECACA;
+      border-left: 4px solid var(--red);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      box-shadow: 0 1px 3px rgba(239,68,68,.08);
+    }
+    .gap-item.warn {
+      border-color: #FDE68A;
+      border-left-color: var(--yellow);
+      box-shadow: 0 1px 3px rgba(245,158,11,.08);
+    }
+    .gap-item-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .gap-item-title { font-size: 13px; font-weight: 700; color: var(--text); }
+    .gap-count-badge {
+      font-size: 10px; font-weight: 700;
+      padding: 2px 7px; border-radius: 10px;
+      background: #FEE2E2; color: #991B1B;
+    }
+    .gap-count-badge.warn { background: #FEF3C7; color: #92400E; }
+    .gap-item-days { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
+    .gap-item-missing { display: flex; gap: 5px; flex-wrap: wrap; }
+    .gap-missing-pill {
+      font-size: 10px; font-weight: 600;
+      padding: 2px 7px; border-radius: 10px;
+      background: #FEE2E2; color: #991B1B;
+    }
+    .gap-missing-pill.warn { background: #FEF3C7; color: #92400E; }
 
     /* ── SPEC COLORS ── */
     .spec-RUM        { background: #EDE9FE; color: #5B21B6; }
@@ -427,15 +543,38 @@
 
   <!-- COVERAGE MAP -->
   <div id="coverage-view">
+    <div class="gap-summary" id="gap-summary"></div>
     <div class="coverage-grid-wrap">
       <div class="coverage-grid" id="cov-grid"></div>
       <div class="coverage-legend">
-        <span style="font-weight:600; color: var(--text)">Coverage:</span>
-        <div class="legend-item"><div class="legend-dot" style="background:#FCA5A5"></div> No sessions</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#FCD34D"></div> 1 session</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#6EE7B7"></div> 2 sessions</div>
-        <div class="legend-item"><div class="legend-dot" style="background:#34D399"></div> 3+ sessions</div>
+        <span style="font-weight:600;color:var(--text);margin-right:4px">Legend:</span>
+        <div class="legend-item">
+          <div class="legend-swatch" style="background:repeating-linear-gradient(45deg,#FEE2E2,#FEE2E2 5px,#FEF2F2 5px,#FEF2F2 10px)"></div>
+          No sessions (gap)
+        </div>
+        <div class="legend-item">
+          <div class="legend-swatch" style="background:#FFFBEB"></div>
+          1 session (partial)
+        </div>
+        <div class="legend-item">
+          <div class="legend-swatch" style="background:#ECFDF5"></div>
+          2 sessions
+        </div>
+        <div class="legend-item">
+          <div class="legend-swatch" style="background:#D1FAE5"></div>
+          3+ sessions
+        </div>
+        <div style="margin-left:auto;display:flex;gap:12px;align-items:center">
+          <div class="legend-item"><span class="cov-region-dot covered-AMER" style="width:9px;height:9px;border-radius:50%;display:inline-block"></span> AMER</div>
+          <div class="legend-item"><span class="cov-region-dot covered-EMEA" style="width:9px;height:9px;border-radius:50%;display:inline-block"></span> EMEA</div>
+          <div class="legend-item"><span class="cov-region-dot covered-APAC" style="width:9px;height:9px;border-radius:50%;display:inline-block"></span> APAC</div>
+          <div class="legend-item"><span class="cov-region-dot missing" style="width:9px;height:9px;border-radius:50%;display:inline-block"></span> Region missing</div>
+        </div>
       </div>
+    </div>
+    <div class="gaps-section">
+      <div class="gaps-section-title">⚠ Gap Details <span id="gap-list-count" style="font-weight:400;color:var(--text-muted);font-size:12px"></span></div>
+      <div class="gaps-grid" id="gaps-list"></div>
     </div>
   </div>
 </main>
@@ -605,13 +744,84 @@ function renderWeekly() {
 }
 
 // ── RENDER COVERAGE MAP ───────────────────────────────────────────────
+const ALL_REGIONS = ['AMER', 'EMEA', 'APAC'];
+const SPECS_LIST  = ['RUM','Agent','APM','DBM','Monitors','Logs','Security','Containers','Serverless','Metrics','Synthetics'];
+
+function getCellData(spec, dayIndex, f) {
+  const sessions = SESSIONS.filter(s =>
+    s.day === dayIndex && s.spec === spec &&
+    matchesFilters(s, { spec:'', format: f.format, region: f.region, showEmpty: true })
+  );
+  const coveredRegions = new Set(sessions.map(s => s.region));
+  return { count: sessions.length, coveredRegions };
+}
+
 function renderCoverage() {
   const f = getFilters();
-  const specs = f.spec ? [f.spec] : ['RUM','Agent','APM','DBM','Monitors','Logs','Security','Containers','Serverless','Metrics','Synthetics'];
-  const grid = document.getElementById('cov-grid');
+  const specs = f.spec ? [f.spec] : SPECS_LIST;
+  const grid  = document.getElementById('cov-grid');
   grid.innerHTML = '';
 
-  // Header row
+  // ── Build data matrix ─────────────────────────────────────────────
+  const matrix = {}; // matrix[spec][day] = { count, coveredRegions }
+  let totalGaps = 0, totalPartial = 0;
+  const dayGapCounts  = Array(5).fill(0);
+  const specGapDays   = {}; // spec → [day indices with gaps]
+  const specGapRegions= {}; // spec → Set of always-missing regions
+
+  specs.forEach(spec => {
+    matrix[spec] = [];
+    specGapDays[spec]    = [];
+    const missingPerDay  = DAYS.map((_, di) => {
+      const d = getCellData(spec, di, f);
+      matrix[spec].push(d);
+      if (d.count === 0) {
+        totalGaps++;
+        dayGapCounts[di]++;
+        specGapDays[spec].push(di);
+      } else if (d.count === 1) totalPartial++;
+      return d.count === 0 ? new Set(ALL_REGIONS) :
+             new Set(ALL_REGIONS.filter(r => !d.coveredRegions.has(r)));
+    });
+    // Regions missing on ALL days for this spec
+    const alwaysMissing = ALL_REGIONS.filter(r =>
+      missingPerDay.every(m => m.has(r))
+    );
+    specGapRegions[spec] = alwaysMissing;
+  });
+
+  const worstDay     = dayGapCounts.indexOf(Math.max(...dayGapCounts));
+  const specsWithGaps= specs.filter(s => specGapDays[s].length > 0);
+  const noApac       = specs.filter(s => specGapRegions[s].includes('APAC'));
+
+  // ── Gap summary cards ─────────────────────────────────────────────
+  document.getElementById('gap-summary').innerHTML = `
+    <div class="gap-card">
+      <div class="gap-card-icon red">⚠️</div>
+      <div class="gap-card-body">
+        <div class="gap-card-number">${totalGaps}</div>
+        <div class="gap-card-label">Coverage gaps this week</div>
+        <div class="gap-card-sub">${specsWithGaps.length} of ${specs.length} specs affected</div>
+      </div>
+    </div>
+    <div class="gap-card">
+      <div class="gap-card-icon yellow">🌍</div>
+      <div class="gap-card-body">
+        <div class="gap-card-number">${noApac.length}</div>
+        <div class="gap-card-label">Specs with no APAC coverage</div>
+        <div class="gap-card-sub">${noApac.length ? '<strong>' + noApac.slice(0,3).join(', ') + (noApac.length > 3 ? '…' : '') + '</strong>' : 'All specs have APAC coverage'}</div>
+      </div>
+    </div>
+    <div class="gap-card">
+      <div class="gap-card-icon blue">📅</div>
+      <div class="gap-card-body">
+        <div class="gap-card-number">${DAYS[worstDay].substring(0,3)}</div>
+        <div class="gap-card-label">Sparsest day</div>
+        <div class="gap-card-sub">${dayGapCounts[worstDay]} spec${dayGapCounts[worstDay]!==1?'s':''} with no sessions</div>
+      </div>
+    </div>`;
+
+  // ── Header row ────────────────────────────────────────────────────
   const specHeader = document.createElement('div');
   specHeader.className = 'cov-header';
   specHeader.textContent = 'Spec / Day';
@@ -620,11 +830,11 @@ function renderCoverage() {
   DAYS.forEach((d, i) => {
     const h = document.createElement('div');
     h.className = `cov-header day-col-h${i === TODAY && weekOffset === 0 ? ' today-h' : ''}`;
-    h.innerHTML = `${d.substring(0,3)}<br><small>${DATES[i]}</small>`;
+    h.innerHTML = `${d.substring(0,3)}<br><small style="font-weight:400">${DATES[i]}</small>`;
     grid.appendChild(h);
   });
 
-  // Data rows
+  // ── Data rows ─────────────────────────────────────────────────────
   specs.forEach(spec => {
     const label = document.createElement('div');
     label.className = 'cov-row-label';
@@ -632,26 +842,89 @@ function renderCoverage() {
     grid.appendChild(label);
 
     DAYS.forEach((_, di) => {
-      const count = SESSIONS.filter(s =>
-        s.day === di && s.spec === spec && matchesFilters(s, {spec:'', format: f.format, region: f.region, showEmpty: true})
-      ).length;
+      const { count, coveredRegions } = matrix[spec][di];
+      const cls = count === 0 ? 'cov-none'
+                : count === 1 ? 'cov-partial'
+                : count === 2 ? 'cov-ok'
+                :               'cov-good';
+
+      const regionsHTML = ALL_REGIONS.map(r => {
+        const covered = coveredRegions.has(r);
+        return `<div class="cov-region-row">
+          <span class="cov-region-dot ${covered ? 'covered-'+r : 'missing'}"></span>
+          <span class="region-name-${covered ? 'covered' : 'missing'}">${r}</span>
+        </div>`;
+      }).join('');
 
       const cell = document.createElement('div');
-      const cls = count === 0 ? 'cov-none' : count === 1 ? 'cov-low' : count === 2 ? 'cov-ok' : 'cov-good';
       cell.className = `cov-cell ${cls}`;
-      cell.textContent = count === 0 ? '—' : count;
-      cell.title = `${spec} · ${DAYS[di]}: ${count} session${count !== 1 ? 's' : ''}`;
+      cell.title     = `${spec} · ${DAYS[di]}: ${count} session${count!==1?'s':''}`;
+      cell.innerHTML = `
+        ${count === 0 ? '<span class="gap-icon">⚠</span>' : ''}
+        <div class="cov-cell-count">${count === 0 ? '—' : count}</div>
+        <div class="cov-cell-regions">${regionsHTML}</div>`;
       grid.appendChild(cell);
     });
   });
 
-  // Re-compute stats for coverage
-  const totalCells = specs.length * 5;
-  const filledCells = specs.reduce((acc, spec) =>
-    acc + DAYS.filter((_, di) => SESSIONS.some(s => s.day === di && s.spec === spec)).length, 0);
+  // ── Gap list ──────────────────────────────────────────────────────
+  const gapItems = specsWithGaps
+    .sort((a, b) => specGapDays[b].length - specGapDays[a].length);
+
+  // Add a "worst day" item first
+  const gapsList = document.getElementById('gaps-list');
+  gapsList.innerHTML = '';
+  document.getElementById('gap-list-count').textContent =
+    `— ${gapItems.length} spec${gapItems.length!==1?'s':''} need attention`;
+
+  // Day-level gaps
+  DAYS.forEach((day, di) => {
+    if (dayGapCounts[di] === 0) return;
+    const severity = dayGapCounts[di] >= 4 ? '' : 'warn';
+    const item = document.createElement('div');
+    item.className = `gap-item ${severity}`;
+    const affectedSpecs = specs.filter(s => specGapDays[s].includes(di));
+    item.innerHTML = `
+      <div class="gap-item-header">
+        <div class="gap-item-title">📅 ${day}</div>
+        <span class="gap-count-badge ${severity}">${dayGapCounts[di]} spec${dayGapCounts[di]!==1?'s':''} with no sessions</span>
+      </div>
+      <div class="gap-item-days">${affectedSpecs.map(s =>
+        `<span class="spec-tag spec-${s}" style="font-size:10px;padding:2px 6px;margin:2px;display:inline-block">${s}</span>`
+      ).join('')}</div>`;
+    gapsList.appendChild(item);
+  });
+
+  // Spec-level gaps
+  gapItems.forEach(spec => {
+    const days = specGapDays[spec];
+    const missingRegions = specGapRegions[spec];
+    const severity = days.length >= 3 ? '' : 'warn';
+    const item = document.createElement('div');
+    item.className = `gap-item ${severity}`;
+    item.innerHTML = `
+      <div class="gap-item-header">
+        <div class="gap-item-title">
+          <span class="spec-tag spec-${spec}" style="font-size:11px">${spec}</span>
+        </div>
+        <span class="gap-count-badge ${severity}">${days.length} day${days.length!==1?'s':''} uncovered</span>
+      </div>
+      <div class="gap-item-days">No sessions on: ${days.map(d => DAYS[d].substring(0,3)).join(', ')}</div>
+      ${missingRegions.length ? `
+      <div class="gap-item-missing">
+        ${missingRegions.map(r => `<span class="gap-missing-pill ${severity}">No ${r}</span>`).join('')}
+      </div>` : ''}`;
+    gapsList.appendChild(item);
+  });
+
+  if (gapItems.length === 0 && !specsWithGaps.length) {
+    gapsList.innerHTML = `<div style="color:var(--green);font-weight:600;font-size:13px">✓ Full coverage this week — no gaps detected.</div>`;
+  }
+
+  // ── Stats bar ─────────────────────────────────────────────────────
   document.getElementById('stat-sessions').textContent  = SESSIONS.filter(s => matchesFilters(s, {...f, spec:'', showEmpty:true})).length;
-  document.getElementById('stat-coverage').textContent  = new Set(SESSIONS.map(s=>s.spec)).size;
-  document.getElementById('stat-gaps').textContent      = totalCells - filledCells;
+  document.getElementById('stat-coverage').textContent  = new Set(SESSIONS.map(s => s.spec)).size;
+  document.getElementById('stat-gaps').textContent      = totalGaps;
 }
 
 // ── VIEW SWITCHING ────────────────────────────────────────────────────
