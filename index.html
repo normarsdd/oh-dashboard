@@ -449,6 +449,44 @@
     .dgc-specs { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
     .dgc-covered-specs { display: flex; flex-wrap: wrap; gap: 5px; }
 
+    /* ── Original gap list cards ── */
+    .gap-item {
+      background: white;
+      border: 1.5px solid #FECACA;
+      border-left: 4px solid var(--red);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      box-shadow: 0 1px 3px rgba(239,68,68,.08);
+      transition: box-shadow .15s;
+    }
+    .gap-item:hover { box-shadow: 0 4px 14px rgba(239,68,68,.12); }
+    .gap-item.warn {
+      border-color: #FDE68A;
+      border-left-color: var(--yellow);
+      box-shadow: 0 1px 3px rgba(245,158,11,.08);
+    }
+    .gap-item.warn:hover { box-shadow: 0 4px 14px rgba(245,158,11,.12); }
+    .gap-item-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 8px; gap: 8px;
+    }
+    .gap-item-title { font-size: 13px; font-weight: 700; color: var(--text); }
+    .gap-count-badge {
+      font-size: 10px; font-weight: 700; white-space: nowrap;
+      padding: 3px 8px; border-radius: 10px;
+      background: #FEE2E2; color: #991B1B;
+    }
+    .gap-count-badge.warn { background: #FEF3C7; color: #92400E; }
+    .gap-item-body { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; line-height: 1.5; }
+    .gap-item-specs { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
+    .gap-item-missing { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 6px; }
+    .gap-missing-pill {
+      font-size: 10px; font-weight: 600;
+      padding: 2px 8px; border-radius: 10px;
+      background: #FEE2E2; color: #991B1B;
+    }
+    .gap-missing-pill.warn { background: #FEF3C7; color: #92400E; }
+
     /* ── All-clear state ── */
     .all-clear {
       background: white; border: 1.5px solid #A7F3D0;
@@ -562,8 +600,8 @@
         <span id="gap-list-count" style="font-weight:400;color:var(--text-muted);font-size:12px"></span>
       </div>
       <div class="group-toggle">
-        <button class="group-btn active" id="btn-by-spec" onclick="setGroupBy('spec')">By Spec</button>
-        <button class="group-btn"        id="btn-by-day"  onclick="setGroupBy('day')">By Day</button>
+        <button class="group-btn active" id="btn-gap-list" onclick="setGroupBy('list')">Gap List</button>
+        <button class="group-btn"        id="btn-by-spec"  onclick="setGroupBy('spec')">By Spec</button>
       </div>
     </div>
     <div class="gaps-grid" id="gaps-list"></div>
@@ -739,11 +777,11 @@ const ALL_REGIONS = ['AMER', 'EMEA', 'APAC'];
 const SPECS_LIST  = ['RUM','Agent','APM','DBM','Monitors','Logs','Security','Containers','Serverless','Metrics','Synthetics'];
 const DAY_INITIALS = ['M','T','W','T','F'];
 
-let groupBy = 'spec';
+let groupBy = 'list';
 function setGroupBy(val) {
   groupBy = val;
-  document.getElementById('btn-by-spec').classList.toggle('active', val === 'spec');
-  document.getElementById('btn-by-day').classList.toggle('active',  val === 'day');
+  document.getElementById('btn-gap-list').classList.toggle('active', val === 'list');
+  document.getElementById('btn-by-spec').classList.toggle('active',  val === 'spec');
   renderView();
 }
 
@@ -835,7 +873,49 @@ function renderCoverage() {
     return;
   }
 
-  if (groupBy === 'spec') {
+  if (groupBy === 'list') {
+    // ── GAP LIST: day-level + spec-level cards (original style) ──
+    // Day cards first
+    DAYS.forEach((day, di) => {
+      if (dayGapCounts[di] === 0) return;
+      const severity    = dayGapCounts[di] >= 4 ? '' : 'warn';
+      const affectedSpecs = specs.filter(s => specGapDays[s].includes(di));
+      const item = document.createElement('div');
+      item.className = `gap-item ${severity}`;
+      item.innerHTML = `
+        <div class="gap-item-header">
+          <div class="gap-item-title">📅 ${day}</div>
+          <span class="gap-count-badge ${severity}">${dayGapCounts[di]} spec${dayGapCounts[di]!==1?'s':''} uncovered</span>
+        </div>
+        <div class="gap-item-specs">${affectedSpecs.map(s =>
+          `<span class="spec-tag spec-${s}" style="font-size:10px;padding:2px 6px">${s}</span>`
+        ).join('')}</div>`;
+      list.appendChild(item);
+    });
+
+    // Spec cards sorted by worst first
+    const sortedSpecs = specsWithGaps.sort((a, b) => specGapDays[b].length - specGapDays[a].length);
+    sortedSpecs.forEach(spec => {
+      const gapDays    = specGapDays[spec];
+      const missingReg = specAlwaysMissingRegions[spec];
+      const severity   = gapDays.length >= 3 ? '' : 'warn';
+      const item = document.createElement('div');
+      item.className = `gap-item ${severity}`;
+      item.innerHTML = `
+        <div class="gap-item-header">
+          <div class="gap-item-title">
+            <span class="spec-tag spec-${spec}" style="font-size:11px">${spec}</span>
+          </div>
+          <span class="gap-count-badge ${severity}">${gapDays.length} day${gapDays.length!==1?'s':''} uncovered</span>
+        </div>
+        <div class="gap-item-body">No sessions on: <strong>${gapDays.map(d => DAYS[d].substring(0,3)).join(', ')}</strong></div>
+        ${missingReg.length ? `<div class="gap-item-missing">
+          ${missingReg.map(r => `<span class="gap-missing-pill ${severity}">No ${r}</span>`).join('')}
+        </div>` : ''}`;
+      list.appendChild(item);
+    });
+
+  } else {
     // ── BY SPEC: one card per spec, with Mon–Fri day bar ─────────
     const sorted = [...specs].sort((a, b) => specGapDays[b].length - specGapDays[a].length);
     sorted.forEach(spec => {
@@ -844,9 +924,7 @@ function renderCoverage() {
       const severity   = gapDays.length === 0 ? 'ok' : gapDays.length >= 3 ? 'critical' : 'warn';
 
       const dayBarHTML = matrix[spec].map((d, di) => {
-        const cls = d.count === 0 ? 'dbc-gap'
-                  : d.count === 1 ? 'dbc-partial'
-                  : d.count === 2 ? 'dbc-ok' : 'dbc-good';
+        const cls      = d.count === 0 ? 'dbc-gap' : d.count === 1 ? 'dbc-partial' : d.count === 2 ? 'dbc-ok' : 'dbc-good';
         const todayCls = di === TODAY && weekOffset === 0 ? ' dbc-today' : '';
         return `<div class="day-bar-cell ${cls}${todayCls}" title="${DAYS[di]}: ${d.count} session${d.count!==1?'s':''}">
           <span class="day-initial">${DAY_INITIALS[di]}</span>
@@ -859,51 +937,10 @@ function renderCoverage() {
       card.innerHTML = `
         <div class="sgc-header">
           <span class="spec-tag spec-${spec}">${spec}</span>
-          <span class="sgc-badge ${severity}">${
-            gapDays.length === 0
-              ? '✓ Full coverage'
-              : gapDays.length + ' day' + (gapDays.length!==1?'s':'') + ' uncovered'
-          }</span>
+          <span class="sgc-badge ${severity}">${gapDays.length === 0 ? '✓ Full coverage' : gapDays.length + ' day' + (gapDays.length!==1?'s':'') + ' uncovered'}</span>
         </div>
         <div class="day-bar">${dayBarHTML}</div>
-        <div class="sgc-regions">${regionChipsHTML(
-          ALL_REGIONS.filter(r => !missingReg.includes(r)),
-          missingReg
-        )}</div>`;
-      list.appendChild(card);
-    });
-
-  } else {
-    // ── BY DAY: one card per day ──────────────────────────────────
-    DAYS.forEach((day, di) => {
-      const gapSpecs     = specs.filter(s => specGapDays[s].includes(di));
-      const coveredSpecs = specs.filter(s => !specGapDays[s].includes(di));
-      const isToday      = di === TODAY && weekOffset === 0;
-      const severity     = gapSpecs.length >= 4 ? 'critical' : gapSpecs.length >= 1 ? 'warn' : 'ok';
-
-      const card = document.createElement('div');
-      card.className = `day-gap-card ${severity}${isToday ? ' today-card' : ''}`;
-      card.innerHTML = `
-        <div class="dgc-header">
-          <div>
-            <div class="dgc-day-name">${day}${isToday ? ' <span style="font-size:11px;background:var(--primary);color:white;padding:1px 8px;border-radius:10px;font-weight:700;vertical-align:middle">Today</span>' : ''}</div>
-            <div class="dgc-date">May ${DATES[di]}</div>
-          </div>
-          <div class="dgc-badges">
-            <span class="sgc-badge ${severity}">${gapSpecs.length} gap${gapSpecs.length!==1?'s':''}</span>
-            <span class="sgc-badge ok" style="margin-top:2px">${coveredSpecs.length} covered</span>
-          </div>
-        </div>
-        ${gapSpecs.length > 0 ? `
-        <div class="dgc-section-label">No sessions</div>
-        <div class="dgc-specs">${gapSpecs.map(s =>
-          `<span class="spec-tag spec-${s}" style="font-size:11px">${s}</span>`
-        ).join('')}</div>` : ''}
-        ${coveredSpecs.length > 0 ? `
-        <div class="dgc-section-label" style="margin-top:${gapSpecs.length?'8px':'0'}">Covered</div>
-        <div class="dgc-covered-specs">${coveredSpecs.map(s =>
-          `<span class="spec-tag spec-${s}" style="font-size:11px;opacity:.7">${s}</span>`
-        ).join('')}</div>` : ''}`;
+        <div class="sgc-regions">${regionChipsHTML(ALL_REGIONS.filter(r => !missingReg.includes(r)), missingReg)}</div>`;
       list.appendChild(card);
     });
   }
