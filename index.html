@@ -931,8 +931,8 @@ function renderCoverage() {
 let currentView = 'weekly';
 function switchView(view, btn) {
   currentView = view;
-  document.getElementById('weekly-view').style.display  = view === 'weekly'   ? '' : 'none';
-  document.getElementById('coverage-view').style.display = view === 'coverage' ? '' : 'none';
+  document.getElementById('weekly-view').style.display   = view === 'weekly'   ? 'block' : 'none';
+  document.getElementById('coverage-view').style.display = view === 'coverage' ? 'block' : 'none';
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
   renderView();
