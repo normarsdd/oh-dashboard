@@ -959,12 +959,7 @@ function cardHTML(s) {
         ${comments.length ? `<span class="comment-badge">${comments.length}</span>` : 'Comment'}
       </button>
     </div>
-    ${commentArea}` : (isBookable ? `
-    <div class="card-feedback" style="justify-content:center">
-      <button class="fb-comment-btn" onclick="markAttended(${s.id})" style="margin:0">
-        <i class="fa-regular fa-circle-check"></i> I attended this session
-      </button>
-    </div>` : '');
+    ${commentArea}` : '';
 
   return `
     <div class="session-card" data-id="${s.id}" data-spec="${s.spec}" data-region="${s.region}">
@@ -998,12 +993,9 @@ function joinSession(id) {
 function bookSession(id, btn) {
   btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Opening…';
   setTimeout(() => {
-    btn.innerHTML = '<i class="fa-regular fa-calendar-plus"></i> Book';
+    attendedIds.add(id);
+    renderWeekly();
   }, 1200);
-}
-function markAttended(id) {
-  attendedIds.add(id);
-  renderWeekly();
 }
 function vote(id, dir) {
   const prev   = thumbState[id];
