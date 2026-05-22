@@ -261,6 +261,40 @@
       background: var(--green-light); color: #065F46;
       border: 1.5px solid #6ee7b7;
     }
+    .btn-booked {
+      background: #EFF6FF; color: #1D4ED8;
+      border: 1.5px solid #BFDBFE;
+      opacity: 1; cursor: default;
+    }
+
+    /* ── ATTENDANCE PROMPT ── */
+    .attendance-prompt {
+      display: flex; align-items: center; gap: 7px;
+      padding: 7px 10px;
+      background: #FFFBEB;
+      border: 1.5px solid #FDE68A;
+      border-radius: 8px;
+      margin-top: 2px;
+    }
+    .attendance-prompt-text {
+      font-size: 11px; font-weight: 600; color: #92400E;
+      margin-right: auto; display: flex; align-items: center; gap: 5px;
+    }
+    .btn-attend-yes {
+      font-size: 11px; font-weight: 700;
+      padding: 4px 10px; border-radius: 6px;
+      background: var(--green); color: white;
+      border: none; cursor: pointer; transition: background .15s;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .btn-attend-yes:hover { background: #059669; }
+    .btn-attend-skip {
+      font-size: 11px; font-weight: 600;
+      padding: 4px 8px; border-radius: 6px;
+      background: none; color: #9CA3AF;
+      border: 1.5px solid #E5E7EB; cursor: pointer; transition: all .15s;
+    }
+    .btn-attend-skip:hover { color: var(--text); border-color: #9CA3AF; }
 
     /* ── EMPTY SLOT ── */
     .empty-slot {
@@ -865,8 +899,10 @@ const TODAY = 3; // Thursday = index 3
 const ALL_SPECS = ['RUM','Agent','APM','DBM','Monitors','Logs','Security','Containers','Serverless','Metrics','Synthetics','Synthetics'];
 
 let weekOffset    = 0;
-const joinedIds   = new Set();  // open/pod sessions the user joined
-const attendedIds = new Set();  // bookable/1:1 sessions the user marked as attended
+const joinedIds   = new Set();  // open/pod sessions joined
+const bookedIds   = new Set();  // bookable/1:1 sessions booked (added to calendar)
+const attendedIds = new Set();  // sessions confirmed as attended (unlocks feedback)
+const skippedIds  = new Set();  // attendance prompt dismissed
 const thumbState  = {};         // id → 'up' | 'down'
 const thumbCounts = {};         // 'up_N' | 'dn_N' → number
 const commentsState = {};       // id → [{text, time}]
@@ -905,22 +941,37 @@ function cardHTML(s) {
   const isBookable = s.format === 'Bookable' || s.format === '1:1';
   const hasAttended = isJoined || isAttended;
 
+
   const formatKey = s.format === '1:1' ? '1-1' : s.format;
   const countDots = !isBookable ? buildDots(s.attendees) : '';
   const slotText  = s.slots !== null
     ? `<span class="attendees"><i class="fa-regular fa-calendar-days"></i> <span class="attendees-count">${s.slots}</span> slot${s.slots!==1?'s':''} left</span>`
     : `<span class="attendees">${countDots}<span class="attendees-count">${isJoined ? s.attendees+1 : s.attendees}</span> attending</span>`;
 
+  const isBooked   = bookedIds.has(s.id);
+  const isSkipped  = skippedIds.has(s.id);
+
   let btn = '';
   if (isBookable) {
-    btn = isAttended
-      ? `<button class="btn btn-joined"><i class="fa-solid fa-check"></i> Attended</button>`
-      : `<button class="btn btn-book" onclick="bookSession(${s.id},this)"><i class="fa-regular fa-calendar-plus"></i> Book</button>`;
+    if (isAttended)
+      btn = `<button class="btn btn-joined"><i class="fa-solid fa-check"></i> Attended</button>`;
+    else if (isBooked)
+      btn = `<button class="btn btn-booked" disabled><i class="fa-solid fa-calendar-check"></i> Booked</button>`;
+    else
+      btn = `<button class="btn btn-book" onclick="bookSession(${s.id})"><i class="fa-regular fa-calendar-plus"></i> Book</button>`;
   } else if (isJoined) {
     btn = `<button class="btn btn-joined"><i class="fa-solid fa-check"></i> Joined</button>`;
   } else {
     btn = `<button class="btn btn-join" onclick="joinSession(${s.id})">Join</button>`;
   }
+
+  // Attendance prompt — shown after booking, until confirmed or skipped
+  const attendancePrompt = (isBookable && isBooked && !isAttended && !isSkipped) ? `
+    <div class="attendance-prompt">
+      <span class="attendance-prompt-text"><i class="fa-regular fa-circle-question"></i> Did you attend?</span>
+      <button class="btn-attend-yes" onclick="confirmAttended(${s.id})"><i class="fa-solid fa-check"></i> Yes</button>
+      <button class="btn-attend-skip" onclick="skipAttendance(${s.id})">Skip</button>
+    </div>` : '';
 
   // Feedback — only visible after attending
   const thumb    = thumbState[s.id];
@@ -974,6 +1025,7 @@ function cardHTML(s) {
       </div>
       <div class="time-line"><i class="fa-regular fa-clock"></i> ${s.time} <span class="tz-label">${s.tz}</span></div>
       <div class="card-bottom">${slotText}${btn}</div>
+      ${attendancePrompt}
       ${feedbackRow}
     </div>`;
 }
@@ -990,12 +1042,17 @@ function joinSession(id) {
   joinedIds.add(id);
   renderWeekly();
 }
-function bookSession(id, btn) {
-  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Opening…';
-  setTimeout(() => {
-    attendedIds.add(id);
-    renderWeekly();
-  }, 1200);
+function bookSession(id) {
+  bookedIds.add(id);
+  renderWeekly();
+}
+function confirmAttended(id) {
+  attendedIds.add(id);
+  renderWeekly();
+}
+function skipAttendance(id) {
+  skippedIds.add(id);
+  renderWeekly();
 }
 function vote(id, dir) {
   const prev   = thumbState[id];
