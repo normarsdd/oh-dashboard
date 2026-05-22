@@ -525,6 +525,164 @@
       text-align: center; padding: 40px 20px;
       color: var(--text-muted); font-size: 14px;
     }
+
+    /* ── REQUEST SLOT BUTTON ── */
+    .request-btn {
+      margin-left: auto;
+      background: var(--primary); color: white;
+      border: none; border-radius: 8px;
+      padding: 7px 14px; font-size: 12px; font-weight: 600;
+      cursor: pointer; display: flex; align-items: center; gap: 6px;
+      transition: background .15s, transform .1s;
+      white-space: nowrap;
+    }
+    .request-btn:hover { background: #5a39e0; transform: translateY(-1px); }
+
+    /* ── FEEDBACK ROW ── */
+    .card-feedback {
+      display: flex; align-items: center; gap: 6px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+      margin-top: 2px;
+    }
+    .fb-btn {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 600;
+      padding: 4px 9px; border-radius: 7px;
+      border: 1.5px solid var(--border);
+      background: var(--bg); color: var(--text-muted);
+      cursor: pointer; transition: all .15s;
+    }
+    .fb-btn:hover { border-color: #C4B5FD; color: var(--text); }
+    .fb-btn.active-up   { background: #ECFDF5; border-color: #6EE7B7; color: #065F46; }
+    .fb-btn.active-down { background: #FEE2E2; border-color: #FCA5A5; color: #991B1B; }
+    .fb-count { font-size: 11px; }
+    .fb-comment-btn {
+      margin-left: auto;
+      display: flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 600;
+      padding: 4px 9px; border-radius: 7px;
+      border: 1.5px solid var(--border);
+      background: var(--bg); color: var(--text-muted);
+      cursor: pointer; transition: all .15s;
+    }
+    .fb-comment-btn:hover { border-color: #C4B5FD; color: var(--primary); }
+    .fb-comment-btn.open  { background: var(--primary-light); border-color: #C4B5FD; color: var(--primary); }
+    .comment-badge {
+      background: var(--primary); color: white;
+      font-size: 9px; font-weight: 700;
+      padding: 1px 5px; border-radius: 10px;
+    }
+
+    /* ── COMMENT AREA ── */
+    .comment-area {
+      margin-top: 8px; padding-top: 8px;
+      border-top: 1px dashed var(--border);
+    }
+    .comment-list { margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px; }
+    .comment-item {
+      background: var(--bg); border-radius: 7px;
+      padding: 7px 10px; font-size: 11px; color: var(--text);
+    }
+    .comment-item-meta { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+    .comment-input-row { display: flex; gap: 6px; align-items: flex-end; }
+    .comment-input {
+      flex: 1; font-size: 12px;
+      border: 1.5px solid var(--border); border-radius: 7px;
+      padding: 6px 9px; resize: none; font-family: inherit;
+      transition: border-color .15s;
+    }
+    .comment-input:focus { outline: none; border-color: var(--primary); }
+    .btn-post {
+      padding: 6px 12px; border-radius: 7px;
+      background: var(--primary); color: white;
+      border: none; font-size: 11px; font-weight: 600;
+      cursor: pointer; transition: background .15s; white-space: nowrap;
+    }
+    .btn-post:hover { background: #5a39e0; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.45); z-index: 1000;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: white; border-radius: 14px;
+      width: 100%; max-width: 480px; margin: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.2);
+      animation: modalIn .2s ease;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: translateY(16px) scale(.97); }
+      to   { opacity: 1; transform: none; }
+    }
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 20px 14px;
+      border-bottom: 1.5px solid var(--border);
+    }
+    .modal-title { font-size: 16px; font-weight: 700; }
+    .modal-close {
+      width: 28px; height: 28px; border-radius: 7px;
+      border: none; background: var(--bg); cursor: pointer;
+      font-size: 16px; display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); transition: background .15s;
+    }
+    .modal-close:hover { background: var(--border); }
+    .modal-body { padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    .form-label { font-size: 12px; font-weight: 600; color: var(--text); }
+    .form-input, .form-select, .form-textarea {
+      font-size: 13px; font-family: inherit;
+      border: 1.5px solid var(--border); border-radius: 8px;
+      padding: 8px 11px; transition: border-color .15s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none; border-color: var(--primary);
+    }
+    .form-textarea { resize: vertical; min-height: 72px; }
+    .form-day-group { display: flex; gap: 6px; flex-wrap: wrap; }
+    .day-checkbox { display: none; }
+    .day-label {
+      padding: 5px 12px; border-radius: 7px;
+      border: 1.5px solid var(--border); font-size: 12px; font-weight: 600;
+      cursor: pointer; color: var(--text-muted); transition: all .15s;
+    }
+    .day-checkbox:checked + .day-label {
+      background: var(--primary-light); border-color: #C4B5FD; color: var(--primary);
+    }
+    .modal-footer {
+      padding: 12px 20px 18px;
+      display: flex; justify-content: flex-end; gap: 8px;
+    }
+    .btn-cancel {
+      padding: 8px 16px; border-radius: 8px;
+      border: 1.5px solid var(--border); background: white;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      color: var(--text-muted); transition: all .15s;
+    }
+    .btn-cancel:hover { border-color: #9CA3AF; }
+    .btn-submit {
+      padding: 8px 20px; border-radius: 8px;
+      background: var(--primary); color: white;
+      border: none; font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: background .15s;
+    }
+    .btn-submit:hover { background: #5a39e0; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: #1F2937; color: white;
+      padding: 12px 20px; border-radius: 10px;
+      font-size: 13px; font-weight: 500;
+      box-shadow: 0 8px 24px rgba(0,0,0,.2);
+      transition: transform .3s ease, opacity .3s ease;
+      opacity: 0; z-index: 2000; white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
   </style>
 </head>
 <body>
@@ -561,12 +719,10 @@
     <option>Metrics</option>
     <option>Synthetics</option>
   </select>
-  <select id="filter-format" onchange="renderView()">
-    <option value="">All Formats</option>
-    <option>Open</option>
-    <option value="1:1">1:1</option>
-    <option>Bookable</option>
-    <option>Pod</option>
+  <select id="filter-role" onchange="renderView()">
+    <option value="">TEE &amp; TSE</option>
+    <option value="TEE">TEE only</option>
+    <option value="TSE">TSE only</option>
   </select>
   <select id="filter-region" onchange="renderView()">
     <option value="">All Regions</option>
@@ -583,7 +739,67 @@
     <input type="checkbox" id="show-empty" checked onchange="renderView()" />
     Show empty slots
   </label>
+  <button class="request-btn" onclick="openModal()">+ Request a Slot</button>
 </div>
+
+<!-- REQUEST MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Request an Office Hours Slot</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Spec *</label>
+        <select class="form-select" id="req-spec">
+          <option value="">Select a spec…</option>
+          <option>RUM</option><option>Agent</option><option>APM</option>
+          <option>DBM</option><option>Monitors</option><option>Logs</option>
+          <option>Security</option><option>Containers</option><option>Serverless</option>
+          <option>Metrics</option><option>Synthetics</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Preferred day(s)</label>
+        <div class="form-day-group">
+          <input type="checkbox" class="day-checkbox" id="d-mon" value="Monday"><label class="day-label" for="d-mon">Mon</label>
+          <input type="checkbox" class="day-checkbox" id="d-tue" value="Tuesday"><label class="day-label" for="d-tue">Tue</label>
+          <input type="checkbox" class="day-checkbox" id="d-wed" value="Wednesday"><label class="day-label" for="d-wed">Wed</label>
+          <input type="checkbox" class="day-checkbox" id="d-thu" value="Thursday"><label class="day-label" for="d-thu">Thu</label>
+          <input type="checkbox" class="day-checkbox" id="d-fri" value="Friday"><label class="day-label" for="d-fri">Fri</label>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Preferred time window</label>
+        <input class="form-input" id="req-time" type="text" placeholder="e.g. 10am – 12pm" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Your timezone</label>
+        <select class="form-select" id="req-tz">
+          <option>America/Mexico_City (CST)</option>
+          <option>America/New_York (EST)</option>
+          <option>America/Los_Angeles (PST)</option>
+          <option>Europe/Paris (CET)</option>
+          <option>Europe/London (GMT)</option>
+          <option>Asia/Tokyo (JST)</option>
+          <option>Australia/Sydney (AEDT)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">What do you need help with?</label>
+        <textarea class="form-textarea" id="req-note" placeholder="Briefly describe the topic or ticket you'd like covered…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-submit" onclick="submitRequest()">Submit Request</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
 
 <main>
   <!-- WEEKLY VIEW -->
@@ -647,8 +863,11 @@ const TODAY = 3; // Thursday = index 3
 
 const ALL_SPECS = ['RUM','Agent','APM','DBM','Monitors','Logs','Security','Containers','Serverless','Metrics','Synthetics','Synthetics'];
 
-let weekOffset = 0;
-const joinedIds = new Set();
+let weekOffset   = 0;
+const joinedIds  = new Set();
+const thumbState = {};   // id → 'up' | 'down'
+const commentsState = {}; // id → [{text, time}]
+let   openCommentId = null;
 
 // ── WEEK LABEL ────────────────────────────────────────────────────────
 function updateWeekLabel() {
@@ -663,40 +882,65 @@ function changeWeek(dir) { weekOffset += dir; updateWeekLabel(); renderView(); }
 // ── FILTER HELPERS ────────────────────────────────────────────────────
 function getFilters() {
   return {
-    spec:   document.getElementById('filter-spec').value,
-    format: document.getElementById('filter-format').value,
-    region: document.getElementById('filter-region').value,
+    spec:      document.getElementById('filter-spec').value,
+    role:      document.getElementById('filter-role').value,
+    region:    document.getElementById('filter-region').value,
     showEmpty: document.getElementById('show-empty').checked,
   };
 }
 function matchesFilters(s, f) {
   if (f.spec   && s.spec   !== f.spec)   return false;
-  if (f.format && s.format !== f.format) return false;
+  if (f.role   && s.role   !== f.role)   return false;
   if (f.region && s.region !== f.region) return false;
   return true;
 }
 
 // ── SESSION CARD HTML ─────────────────────────────────────────────────
 function cardHTML(s) {
-  const isJoined   = joinedIds.has(s.id);
-  const formatKey  = s.format === '1:1' ? '1-1' : s.format;
-  const countDots  = s.format !== '1:1' && s.format !== 'Bookable'
+  const isJoined  = joinedIds.has(s.id);
+  const formatKey = s.format === '1:1' ? '1-1' : s.format;
+  const countDots = s.format !== '1:1' && s.format !== 'Bookable'
     ? buildDots(s.attendees) : '';
-  const slotText   = s.slots !== null
+  const slotText  = s.slots !== null
     ? `<span class="attendees">📅 <span class="attendees-count">${s.slots}</span> slot${s.slots!==1?'s':''} left</span>`
     : `<span class="attendees">${countDots}<span class="attendees-count">${isJoined ? s.attendees+1 : s.attendees}</span> attending</span>`;
 
   let btn = '';
   if (s.format === 'Bookable' || s.format === '1:1') {
-    btn = `<button class="btn btn-book" onclick="bookSession(${s.id}, this)">Book</button>`;
+    btn = `<button class="btn btn-book" onclick="bookSession(${s.id},this)">Book</button>`;
   } else if (isJoined) {
     btn = `<button class="btn btn-joined">Joined ✓</button>`;
   } else {
-    btn = `<button class="btn btn-join" onclick="joinSession(${s.id}, this)">Join</button>`;
+    btn = `<button class="btn btn-join" onclick="joinSession(${s.id})">Join</button>`;
   }
 
+  // Feedback state
+  const thumb     = thumbState[s.id];
+  const upCount   = (commentsState[`up_${s.id}`] || 0);
+  const downCount = (commentsState[`dn_${s.id}`] || 0);
+  const comments  = commentsState[s.id] || [];
+  const isOpen    = openCommentId === s.id;
+
+  const commentsHTML = comments.map(c => `
+    <div class="comment-item">
+      ${c.text}
+      <div class="comment-item-meta">${c.time}</div>
+    </div>`).join('');
+
+  const commentArea = isOpen ? `
+    <div class="comment-area">
+      ${comments.length ? `<div class="comment-list">${commentsHTML}</div>` : ''}
+      <div class="comment-input-row">
+        <textarea class="comment-input" rows="2" placeholder="Leave feedback about this session…"></textarea>
+        <button class="btn-post" onclick="submitComment(${s.id})">Post</button>
+      </div>
+    </div>` : (comments.length ? `
+    <div class="comment-area">
+      <div class="comment-list">${commentsHTML}</div>
+    </div>` : '');
+
   return `
-    <div class="session-card" data-spec="${s.spec}" data-region="${s.region}" data-format="${s.format}">
+    <div class="session-card" data-id="${s.id}" data-spec="${s.spec}" data-region="${s.region}">
       <div class="card-top">
         <span class="spec-tag spec-${s.spec}">${s.spec}</span>
         <span class="format-badge format-${formatKey}">${s.format}</span>
@@ -708,27 +952,99 @@ function cardHTML(s) {
       </div>
       <div class="time-line">🕐 ${s.time} <span class="tz-label">${s.tz}</span></div>
       <div class="card-bottom">${slotText}${btn}</div>
+      <div class="card-feedback">
+        <button class="fb-btn${thumb==='up'?' active-up':''}" onclick="vote(${s.id},'up')">
+          👍 <span class="fb-count">${upCount||''}</span>
+        </button>
+        <button class="fb-btn${thumb==='down'?' active-down':''}" onclick="vote(${s.id},'down')">
+          👎 <span class="fb-count">${downCount||''}</span>
+        </button>
+        <button class="fb-comment-btn${isOpen?' open':''}" onclick="toggleComment(${s.id})">
+          💬 ${comments.length ? `<span class="comment-badge">${comments.length}</span>` : 'Comment'}
+        </button>
+      </div>
+      ${commentArea}
     </div>`;
 }
 
 function buildDots(count) {
-  const total = 4;
   let html = '';
-  for (let i = 0; i < total; i++)
+  for (let i = 0; i < 4; i++)
     html += `<span class="dot ${i < count ? 'filled' : ''}"></span>`;
   return html;
 }
 
 // ── ACTIONS ──────────────────────────────────────────────────────────
-function joinSession(id, btn) {
+function joinSession(id) {
   joinedIds.add(id);
-  const card = btn.closest('.session-card');
-  const s = SESSIONS.find(x => x.id === id);
-  card.innerHTML = cardHTML(s);
+  renderWeekly();
 }
 function bookSession(id, btn) {
   btn.textContent = 'Opening…';
   setTimeout(() => { btn.textContent = 'Book'; }, 1200);
+}
+function vote(id, dir) {
+  thumbState[id] = thumbState[id] === dir ? null : dir;
+  const key = dir === 'up' ? `up_${id}` : `dn_${id}`;
+  const wasActive = thumbState[id] === null; // just toggled off
+  if (!wasActive) {
+    commentsState[key] = (commentsState[key] || 0) + 1;
+    // remove from opposite
+    const oppKey = dir === 'up' ? `dn_${id}` : `up_${id}`;
+    if (commentsState[oppKey] > 0) commentsState[oppKey] = Math.max(0, commentsState[oppKey] - 1);
+  } else {
+    commentsState[key] = Math.max(0, (commentsState[key] || 0) - 1);
+  }
+  renderWeekly();
+}
+function toggleComment(id) {
+  openCommentId = openCommentId === id ? null : id;
+  renderWeekly();
+}
+function submitComment(id) {
+  const ta = document.querySelector(`[data-id="${id}"] .comment-input`);
+  if (!ta || !ta.value.trim()) return;
+  if (!commentsState[id]) commentsState[id] = [];
+  commentsState[id].push({
+    text: ta.value.trim(),
+    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  });
+  renderWeekly();
+}
+
+// ── MODAL ──────────────────────────────────────────────────────────
+function openModal() {
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  // reset form
+  ['req-spec','req-time','req-note'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.querySelectorAll('.day-checkbox').forEach(cb => cb.checked = false);
+}
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+function submitRequest() {
+  const spec = document.getElementById('req-spec').value;
+  if (!spec) {
+    document.getElementById('req-spec').style.borderColor = '#EF4444';
+    setTimeout(() => document.getElementById('req-spec').style.borderColor = '', 1500);
+    return;
+  }
+  closeModal();
+  showToast('✓ Request submitted! The TEE team will follow up shortly.');
+}
+
+// ── TOAST ───────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
 }
 
 // ── RENDER WEEKLY ─────────────────────────────────────────────────────
@@ -788,7 +1104,7 @@ function setGroupBy(val) {
 function getCellData(spec, dayIndex, f) {
   const sessions = SESSIONS.filter(s =>
     s.day === dayIndex && s.spec === spec &&
-    matchesFilters(s, { spec:'', format: f.format, region: f.region, showEmpty: true })
+    matchesFilters(s, { spec:'', role: f.role, region: f.region, showEmpty: true })
   );
   return { count: sessions.length, coveredRegions: new Set(sessions.map(s => s.region)) };
 }
